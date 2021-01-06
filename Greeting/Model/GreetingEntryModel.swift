@@ -10,4 +10,5 @@ import SwiftUI
 
 struct GreetingEntryModel: TimelineEntry {
     let date: Date
+    let imageKey: String
 }

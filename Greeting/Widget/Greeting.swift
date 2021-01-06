@@ -24,7 +24,7 @@ struct Greeting: Widget {
 
 struct Greeting_Previews: PreviewProvider {
     static var previews: some View {
-        GreetingEntryView(entry: GreetingEntryModel(date: Date()))
+        GreetingEntryView(entry: GreetingEntryModel(date: Date(), imageKey: ""))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }

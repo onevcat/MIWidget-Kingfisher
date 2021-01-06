@@ -8,16 +8,20 @@
 import WidgetKit
 import SwiftUI
 import struct Kingfisher.KFImage
+import struct Kingfisher.ImageResource
+import enum Kingfisher.Source
 
 struct GreetingEntryView: View {
     
     let entry: GreetingEntryModel
-    
+    var source: Source {
+        .network(ImageResource(downloadURL: URL(string: "https://picsum.photos/1080/620")!, cacheKey: entry.imageKey))
+    }
+
     var body: some View {
         
         ZStack(alignment: .leading) {
-            KFImage(URL(string: "https://picsum.photos/1080/620")!,
-                    options: [.forceRefresh])
+            KFImage(source: source)
                 .onSuccess { r in
                     print("suc: \(r)")
                 }
@@ -92,6 +96,6 @@ struct GreetingEntryView: View {
 
 struct GreetingEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        GreetingEntryView(entry: GreetingEntryModel(date: Date()))
+        GreetingEntryView(entry: GreetingEntryModel(date: Date(), imageKey: ""))
     }
 }

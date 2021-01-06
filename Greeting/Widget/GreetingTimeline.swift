@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import Kingfisher
 
 struct GreetingTimeline: TimelineProvider {
     
@@ -16,12 +17,12 @@ struct GreetingTimeline: TimelineProvider {
     
     func placeholder(in context: Context) -> GreetingEntryModel {
         
-        Entry(date: Date())
+        Entry(date: Date(), imageKey: "")
     }
     
     func getSnapshot(in context: Context, completion: @escaping (GreetingEntryModel) -> Void) {
         
-        let entry = Entry(date: Date())
+        let entry = Entry(date: Date(), imageKey: "")
         completion(entry)
     }
     
@@ -30,17 +31,27 @@ struct GreetingTimeline: TimelineProvider {
         var entries: [Entry] = []
         let currentDate = Date()
         let refreshTime = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate)!
+
+        var resource = [ImageResource]()
         
         for hoursOffset in 0..<24 {
             
             guard let entryDate = Calendar.current.date(byAdding: .hour, value: hoursOffset, to: currentDate) else {
                 return
             }
-            let entry = Entry(date: entryDate)
+
+            let imageKey = "kf-image-\(hoursOffset)"
+            let entry = Entry(date: entryDate, imageKey: imageKey)
             entries.append(entry)
+
+            resource.append(ImageResource(downloadURL: URL(string: "https://picsum.photos/1080/620")!, cacheKey: imageKey))
         }
-        
-        let timeLine = Timeline(entries: entries, policy: .after(refreshTime))
-        completion(timeLine)
+
+        ImagePrefetcher(resources: resource, options: [.forceRefresh], completionHandler: { _, _, _ in
+            let timeLine = Timeline(entries: entries, policy: .after(refreshTime))
+            print("Timeline done.")
+            completion(timeLine)
+        }).start()
+        print("Start Prefetching...")
     }
 }
